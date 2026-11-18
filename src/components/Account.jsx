@@ -1,0 +1,54 @@
+import { useState } from "react";
+import { Lock, UserPlus } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+/** Écran unique de connexion ET de création de compte (les potes créent leur compte ici, toi aussi). */
+export function Account() {
+  const [mode, setMode] = useState("login"); // "login" | "signup"
+  const [email, setEmail] = useState("");
+  const [pwd, setPwd] = useState("");
+  const [msg, setMsg] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setSending(true);
+    setMsg("");
+    const action = mode === "login" ? supabase.auth.signInWithPassword : supabase.auth.signUp;
+    const { error } = await action({ email, password: pwd });
+    setSending(false);
+    if (error) return setMsg(error.message);
+    if (mode === "signup") setMsg("Compte créé ! Si une confirmation par email est activée, vérifie ta boîte mail avant de jouer.");
+  };
+
+  return (
+    <Card className="mx-auto max-w-sm">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          {mode === "login" ? <Lock size={16} /> : <UserPlus size={16} />}
+          {mode === "login" ? "sudo login" : "créer un compte"}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <form onSubmit={submit} className="space-y-3">
+          <Input type="email" placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <Input type="password" placeholder="mot de passe (6 caractères min.)" value={pwd} onChange={(e) => setPwd(e.target.value)} required minLength={6} />
+          {msg && <p className="text-sm text-destructive">{msg}</p>}
+          <Button className="w-full" type="submit" disabled={sending}>
+            {sending ? "…" : mode === "login" ? "Se connecter" : "Créer mon compte"}
+          </Button>
+        </form>
+        <button
+          type="button"
+          onClick={() => { setMode(mode === "login" ? "signup" : "login"); setMsg(""); }}
+          className="w-full cursor-pointer text-center text-xs text-muted-foreground hover:text-accent"
+        >
+          {mode === "login" ? "Pas encore de compte ? Crée-en un" : "Déjà un compte ? Connecte-toi"}
+        </button>
+      </CardContent>
+    </Card>
+  );
+}
