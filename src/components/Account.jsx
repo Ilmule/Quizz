@@ -17,8 +17,10 @@ export function Account() {
     e.preventDefault();
     setSending(true);
     setMsg("");
-    const action = mode === "login" ? supabase.auth.signInWithPassword : supabase.auth.signUp;
-    const { error } = await action({ email, password: pwd });
+    const { error } =
+      mode === "login"
+        ? await supabase.auth.signInWithPassword({ email, password: pwd })
+        : await supabase.auth.signUp({ email, password: pwd });
     setSending(false);
     if (error) return setMsg(error.message);
     if (mode === "signup") setMsg("Compte créé ! Si une confirmation par email est activée, vérifie ta boîte mail avant de jouer.");
