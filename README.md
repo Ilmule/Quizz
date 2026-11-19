@@ -4,7 +4,7 @@
 
 ---
 
-## 🤖 À propos de ce projet
+## 🤖 À propos de ce projet 
 
 **L'intégralité du code, de la configuration et de cette documentation a été écrite par une intelligence artificielle** (Claude, d'Anthropic), à la demande et avec les retours d'un utilisateur humain au fil d'une conversation. Aucune ligne de code n'a été copiée depuis un tutoriel ou un autre projet : tout a été généré sur mesure pour ce besoin précis.
 
