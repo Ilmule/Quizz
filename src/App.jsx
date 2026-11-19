@@ -49,11 +49,14 @@ function PlayQuiz({ quiz, onExit, session }) {
       .then(({ data }) => setQs(shuffle(data ?? [])));
   }, [quiz.id]);
 
+  const [saveError, setSaveError] = useState("");
+
   // Enregistre le score une seule fois, uniquement si quelqu'un est connecté (sinon la partie reste anonyme)
   useEffect(() => {
     if (qs?.length && i >= qs.length && session && !saved) {
       setSaved(true);
-      supabase.from("scores").insert({ user_id: session.user.id, quiz_id: quiz.id, score, total: qs.length });
+      supabase.from("scores").insert({ user_id: session.user.id, quiz_id: quiz.id, score, total: qs.length })
+        .then(({ error }) => { if (error) setSaveError(error.message); });
     }
   }, [i, qs, session, saved, score, quiz.id]);
 
@@ -69,6 +72,7 @@ function PlayQuiz({ quiz, onExit, session }) {
       <Card><CardContent className="space-y-4">
         <p className="text-xl font-extrabold text-primary">$ score --final</p>
         <p className="text-3xl font-extrabold">{score} / {qs.length}</p>
+        {saveError && <p className="text-sm text-destructive">Score non enregistré : {saveError}</p>}
         <div className="flex gap-2">
           <Button onClick={() => { setI(0); setScore(0); setPicked(null); setSaved(false); setQs(shuffle(qs)); }}>Rejouer</Button>
           <Button variant="outline" onClick={onExit}>Retour</Button>
