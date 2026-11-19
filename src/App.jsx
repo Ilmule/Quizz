@@ -325,10 +325,10 @@ export default function App() {
 
       {view === "home" && <Home onPlay={(q) => { setQuiz(q); setView("play"); }} />}
       {view === "play" && <PlayQuiz quiz={quiz} onExit={() => setView("home")} session={session} />}
-      {view === "account" && <Account />}
-      {view === "history" && (session ? <History session={session} /> : <Account />)}
+      {view === "account" && <Account onLoggedIn={() => setView("home")} />}
+      {view === "history" && (session ? <History session={session} /> : <Account onLoggedIn={() => setView("home")} />)}
       {view === "admin" && (
-        !session ? <Account />
+        !session ? <Account onLoggedIn={() => setView("home")} />
         : isAdmin ? <Dashboard />
         : <p className="text-destructive">Accès refusé : ce compte n’est pas administrateur.</p>
       )}
