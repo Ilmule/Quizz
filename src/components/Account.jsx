@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 /** Écran unique de connexion ET de création de compte (les potes créent leur compte ici, toi aussi). */
-export function Account() {
+export function Account({ onLoggedIn }) {
   const [mode, setMode] = useState("login"); // "login" | "signup"
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
@@ -17,13 +17,15 @@ export function Account() {
     e.preventDefault();
     setSending(true);
     setMsg("");
-    const { error } =
+    const { data, error } =
       mode === "login"
         ? await supabase.auth.signInWithPassword({ email, password: pwd })
         : await supabase.auth.signUp({ email, password: pwd });
     setSending(false);
     if (error) return setMsg(error.message);
-    if (mode === "signup") setMsg("Compte créé ! Si une confirmation par email est activée, vérifie ta boîte mail avant de jouer.");
+    // Une session active signifie que la connexion a vraiment eu lieu (pas besoin d'attendre une confirmation par email)
+    if (data?.session) return onLoggedIn?.();
+    if (mode === "signup") setMsg("Compte créé ! Vérifie ta boîte mail pour confirmer ton adresse avant de jouer.");
   };
 
   return (
