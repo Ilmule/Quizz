@@ -9,9 +9,6 @@ const SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
 /** Écran unique de connexion ET de création de compte (les potes créent leur compte ici, toi aussi). */
 export function Account({ onLoggedIn }) {
-  // TEMPORAIRE : à retirer une fois le souci de clé résolu
-  useEffect(() => { console.log("DEBUG SITE_KEY =", JSON.stringify(SITE_KEY)); }, []);
-
   const [mode, setMode] = useState("login"); // "login" | "signup"
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
